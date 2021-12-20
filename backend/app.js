@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
-const app = express();
+
 mongoose
   .connect(
     "mongodb+srv://Ahmad:13Juillet2020@cluster0.hdxbu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
@@ -10,7 +10,8 @@ mongoose
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-app.use(express.json());
+const app = express();
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+app.use(express.json());
 app.use(bodyParser.json());
 app.use("/api/auth", userRoutes);
 
