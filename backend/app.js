@@ -1,12 +1,13 @@
+require("dotenv").config();
 const express = require("express");
-const bodyParser = require("body-parser");
+
 const mongoose = require("mongoose");
 const path = require("path");
 mongoose
-  .connect(
-    "mongodb+srv://Ahmad:13Juillet2020@cluster0.hdxbu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.MONGODB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 const userRoutes = require("./routes/user");
@@ -26,7 +27,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
