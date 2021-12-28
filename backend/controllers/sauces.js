@@ -71,3 +71,42 @@ exports.getAllSauce = (req, res, next) => {
       });
     });
 };
+//like et dislike des sauces
+
+exports.createLike = (req, res) => {
+  Sauce.findOne({
+    _id: req.params.id,
+  })
+    .then((sauce) => {
+      if (req.body.like == -1) {
+        sauce.dislikes++;
+        sauce.userDisliked.push(req.body.userId);
+        sauce.save();
+      }
+
+      if (req.body.like == 1) {
+        sauce.likes++;
+        sauce.userLiked.push(req.body.userId);
+        sauce.save();
+      }
+
+      if (req.body.like == 0) {
+        if (sauce.userLiked.indexOf(req.body.userId) != -1) {
+          sauce.likes--;
+          sauce.userLiked.splice(sauce.userLiked.indexOf(req.body.userId), 1);
+        } else {
+          sauce.dislikes--;
+          sauce.userDisliked.splice(
+            sauce.userDisliked.indexOf(req.body.userId),
+            1
+          );
+        }
+        sauce.save();
+      }
+
+      res.status(200).json({ message: "like pris en compte" });
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
+};
