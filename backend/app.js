@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 const path = require("path");
 mongoose
   .connect(process.env.MONGODB, {
@@ -13,7 +13,8 @@ mongoose
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
 const app = express();
-app.use(express.json());
+
+app.use(helmet.xssFilter());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -26,7 +27,7 @@ app.use((req, res, next) => {
   );
   next();
 });
-
+app.use(express.json());
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
